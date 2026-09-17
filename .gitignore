@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 run-all.sh
 run-endpoint-tests.sh
 endpoint-behaviors/
+CoverageReport/
