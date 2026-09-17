@@ -481,5 +481,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 run-all.sh
-smoke-test.sh
-cascade-test.sh
+run-endpoint-tests.sh
+endpoint-behaviors/

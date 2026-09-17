@@ -1,0 +1,66 @@
+Summary
+  Generated on: 9/17/2026 - 2:31:53 PM
+  Coverage date: 9/17/2026 - 2:31:51 PM - 9/17/2026 - 2:31:52 PM
+  Parser: MultiReport (3x Cobertura)
+  Assemblies: 3
+  Classes: 40
+  Files: 39
+  Line coverage: 84.2%
+  Covered lines: 938
+  Uncovered lines: 175
+  Coverable lines: 1113
+  Total lines: 1836
+  Branch coverage: 70.4% (117 of 166)
+  Covered branches: 117
+  Total branches: 166
+  Method coverage: 89.5% (180 of 201)
+  Full method coverage: 85% (171 of 201)
+  Covered methods: 180
+  Fully covered methods: 171
+  Total methods: 201
+
+CatalogService                                                     85%
+  CatalogService.Controllers.CatalogController                   71.7%
+  CatalogService.Data.CatalogServiceContext                        84%
+  CatalogService.Data.DataSeeder                                  100%
+  CatalogService.Models.Dtos.AvailabilityUpdateRequest              0%
+  CatalogService.Models.Dtos.BookDetail                           100%
+  CatalogService.Models.Dtos.BookListItem                         100%
+  CatalogService.Models.Dtos.PagedResponse<T>                     100%
+  CatalogService.Models.Entities.Book                             100%
+  Program                                                         100%
+
+ReservationService                                               77.9%
+  Program                                                        91.4%
+  ReservationService.Controllers.ReservationsController            68%
+  ReservationService.Controllers.WaitlistController              97.4%
+  ReservationService.Data.ReservationServiceContext              89.7%
+  ReservationService.Models.Dtos.ActiveReservationDto             100%
+  ReservationService.Models.Dtos.BookAvailabilityResult           100%
+  ReservationService.Models.Dtos.CheckoutRequest                  100%
+  ReservationService.Models.Dtos.CreateReservationRequest         100%
+  ReservationService.Models.Dtos.HistoryEntryDto                    0%
+  ReservationService.Models.Dtos.JoinWaitlistRequest              100%
+  ReservationService.Models.Dtos.ReturnRequest                    100%
+  ReservationService.Models.Dtos.UserValidationResult             100%
+  ReservationService.Models.Dtos.WaitlistEntryDto                 100%
+  ReservationService.Models.Entities.Reservation                  100%
+  ReservationService.Models.Entities.Waitlist                     100%
+  ReservationService.Services.BackgroundJobs.WaitlistExpiryJob   66.6%
+  ReservationService.Services.CascadeService                     89.7%
+  ReservationService.Services.HttpClients.CatalogServiceClient      0%
+  ReservationService.Services.HttpClients.UserServiceClient         0%
+
+UserService                                                      98.4%
+  Program                                                         100%
+  UserService.Controllers.AuthController                          100%
+  UserService.Controllers.UsersController                         100%
+  UserService.Data.DataSeeder                                     100%
+  UserService.Data.UserServiceContext                              87%
+  UserService.Models.Dtos.ErrorResponse                           100%
+  UserService.Models.Dtos.LoginRequest                            100%
+  UserService.Models.Dtos.RegisterRequest                         100%
+  UserService.Models.Dtos.UserValidationResponse                  100%
+  UserService.Models.Entities.User                                100%
+  UserService.Services.JwtTokenService                            100%
+  UserService.Services.PasswordHasher                             100%

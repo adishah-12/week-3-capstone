@@ -12,7 +12,7 @@ public static class CascadeService
 
     public static async Task ReleaseOrCascadeAsync(
         ReservationServiceContext db,
-        CatalogServiceClient catalogClient,
+        ICatalogServiceClient catalogClient,
         Guid bookId)
     {
         while (true)

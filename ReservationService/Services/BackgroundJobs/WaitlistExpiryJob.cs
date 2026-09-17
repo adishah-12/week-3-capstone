@@ -36,7 +36,7 @@ public class WaitlistExpiryJob : BackgroundService
     {
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ReservationServiceContext>();
-        var catalogClient = scope.ServiceProvider.GetRequiredService<CatalogServiceClient>();
+        var catalogClient = scope.ServiceProvider.GetRequiredService<ICatalogServiceClient>();
 
         var now = DateTime.UtcNow;
 

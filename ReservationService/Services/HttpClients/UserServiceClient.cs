@@ -3,7 +3,7 @@ using ReservationService.Models.Dtos;
 
 namespace ReservationService.Services.HttpClients;
 
-public class UserServiceClient
+public class UserServiceClient : IUserServiceClient
 {
     private readonly HttpClient _http;
 

@@ -20,13 +20,13 @@ public class ReservationsController : ControllerBase
     private const int CheckoutDays = 14;
 
     private readonly ReservationServiceContext _db;
-    private readonly UserServiceClient _userClient;
-    private readonly CatalogServiceClient _catalogClient;
+    private readonly IUserServiceClient _userClient;
+    private readonly ICatalogServiceClient _catalogClient;
     private const decimal LateFeePerDay = 1.00m;
     public ReservationsController(
         ReservationServiceContext db,
-        UserServiceClient userClient,
-        CatalogServiceClient catalogClient)
+        IUserServiceClient userClient,
+        ICatalogServiceClient catalogClient)
     {
         _db = db;
         _userClient = userClient;

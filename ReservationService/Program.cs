@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using ReservationService.Data;
 using ReservationService.Services.BackgroundJobs;
 using ReservationService.Services.HttpClients;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +20,12 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<ReservationServiceContext>(options =>
     options.UseInMemoryDatabase("ReservationServiceDb"));
 
-builder.Services.AddHttpClient<UserServiceClient>(client =>
+builder.Services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:UserService"]!);
 });
 
-builder.Services.AddHttpClient<CatalogServiceClient>(client =>
+builder.Services.AddHttpClient<ICatalogServiceClient, CatalogServiceClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CatalogService"]!);
 });
@@ -51,6 +53,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = (context, _) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        return new ValueTask();
+    };
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -61,9 +82,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.Run();
+
+public partial class Program { }

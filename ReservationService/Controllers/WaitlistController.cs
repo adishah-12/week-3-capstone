@@ -16,9 +16,9 @@ namespace ReservationService.Controllers;
 public class WaitlistController : ControllerBase
 {
     private readonly ReservationServiceContext _db;
-    private readonly CatalogServiceClient _catalogClient;
+    private readonly ICatalogServiceClient _catalogClient;
 
-    public WaitlistController(ReservationServiceContext db, CatalogServiceClient catalogClient)
+    public WaitlistController(ReservationServiceContext db, ICatalogServiceClient catalogClient)
     {
         _db = db;
         _catalogClient = catalogClient;
