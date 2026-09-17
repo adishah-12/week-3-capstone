@@ -16,8 +16,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "User Service API", Version = "v1" });
 });
 
-builder.Services.AddDbContext<UserServiceContext>(options =>
-    options.UseInMemoryDatabase("UserServiceDb"));
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<UserServiceContext>(options =>
+        options.UseInMemoryDatabase("UserServiceDb"));
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<UserServiceContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<JwtTokenService>();
@@ -81,6 +90,10 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<UserServiceContext>();
+    if (!app.Environment.IsDevelopment())
+    {
+        context.Database.Migrate();
+    }
     var hasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
     await DataSeeder.SeedAsync(context, hasher);
 }

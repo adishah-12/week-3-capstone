@@ -17,8 +17,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Reservation Service API", Version = "v1" });
 });
 
-builder.Services.AddDbContext<ReservationServiceContext>(options =>
-    options.UseInMemoryDatabase("ReservationServiceDb"));
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<ReservationServiceContext>(options =>
+        options.UseInMemoryDatabase("ReservationServiceDb"));
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<ReservationServiceContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 builder.Services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
 {
@@ -87,6 +96,15 @@ app.UseRateLimiter();
 app.MapControllers();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+using (var scope = app.Services.CreateScope())
+{
+    if (!app.Environment.IsDevelopment())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ReservationServiceContext>();
+        context.Database.Migrate();
+    }
+}
 
 app.Run();
 

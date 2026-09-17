@@ -12,8 +12,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Catalog Service API", Version = "v1" });
 });
 
-builder.Services.AddDbContext<CatalogServiceContext>(options =>
-    options.UseInMemoryDatabase("CatalogServiceDb"));
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<CatalogServiceContext>(options =>
+        options.UseInMemoryDatabase("CatalogServiceDb"));
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<CatalogServiceContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -50,6 +59,10 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CatalogServiceContext>();
+    if (!app.Environment.IsDevelopment())
+    {
+        context.Database.Migrate();
+    }
     await DataSeeder.SeedAsync(context);
 }
 
