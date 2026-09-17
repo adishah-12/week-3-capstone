@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ReservationService.Data;
+using ReservationService.Services.BackgroundJobs;
 using ReservationService.Services.HttpClients;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddHttpClient<CatalogServiceClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CatalogService"]!);
 });
+
+builder.Services.AddHostedService<WaitlistExpiryJob>();
 
 var jwtSecret = builder.Configuration["Jwt:Secret"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;

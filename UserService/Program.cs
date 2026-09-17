@@ -56,4 +56,11 @@ app.MapControllers();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<UserServiceContext>();
+    var hasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
+    await DataSeeder.SeedAsync(context, hasher);
+}
+
 app.Run();

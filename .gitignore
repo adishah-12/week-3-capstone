@@ -482,3 +482,4 @@ $RECYCLE.BIN/
 *.swp
 run-all.sh
 smoke-test.sh
+cascade-test.sh
