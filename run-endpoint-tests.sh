@@ -3,7 +3,6 @@ set -e
 
 echo "== Starting all services =="
 ./run-all.sh &
-RUN_ALL_PID=$!
 
 until curl -s http://localhost:5001/health > /dev/null && \
       curl -s http://localhost:5002/health > /dev/null && \
@@ -23,3 +22,6 @@ kill %1 2>/dev/null
 pkill -f "dotnet.*UserService" 2>/dev/null
 pkill -f "dotnet.*CatalogService" 2>/dev/null
 pkill -f "dotnet.*ReservationService" 2>/dev/null
+
+wait 2>/dev/null
+exit 0

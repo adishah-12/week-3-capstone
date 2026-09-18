@@ -107,7 +107,3 @@ curl -s -X POST http://localhost:5003/api/reservations/$(echo "$RESERVE" | jq -r
 echo "== Borrowing history =="
 curl -s http://localhost:5003/api/reservations/history \
   -H "Authorization: Bearer $TOKEN" | jq
-
-echo "User ID:  $USER_ID"
-echo "Book ID:  $BOOK_ID"
-echo "Token:    $TOKEN"
