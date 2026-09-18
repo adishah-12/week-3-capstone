@@ -86,3 +86,16 @@ ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add <MigrationName>
 ```
 
 (`ASPNETCORE_ENVIRONMENT=Production` is required — Development resolves to the InMemory provider, which has no migrator.)
+
+## CI
+
+`.github/workflows/ci-cd.yml` - runs on every push/PR to `main`, plus manual trigger (`workflow_dispatch`).
+
+- **unit-tests** - `dotnet build` + `dotnet test` across all 3 test projects
+- **endpoint-behavior-tests** - runs after `unit-tests` passes. Builds all 3 services (`Release`), starts them (`run-all.sh`), waits on `/health` (60s timeout, dumps logs on failure), then runs `endpoint-behaviors/smoke-test.sh` and `endpoint-behaviors/cascade-test.sh` against the live stack — full register → reserve → checkout → return → waitlist cascade flow with real HTTP calls between services
+
+Local run:
+```bash
+chmod +x run-all.sh run-endpoint-tests.sh endpoint-behaviors/*.sh
+./run-endpoint-tests.sh
+```
