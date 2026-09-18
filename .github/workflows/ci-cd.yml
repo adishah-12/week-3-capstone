@@ -41,7 +41,10 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
-
+      
+      - name: Build all services
+        run: dotnet build --configuration Release
+      
       - name: Make scripts executable
         run: chmod +x run-all.sh run-endpoint-tests.sh endpoint-behaviors/*.sh
 
