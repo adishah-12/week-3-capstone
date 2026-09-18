@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+rm -f /tmp/service-pids.txt
+
 echo "== Starting all services =="
 ./run-all.sh &
 
@@ -18,10 +20,10 @@ echo "== Running cascade tests =="
 
 echo "== All endpoint behavior tests completed =="
 
-kill %1 2>/dev/null
-pkill -f "dotnet.*UserService" 2>/dev/null
-pkill -f "dotnet.*CatalogService" 2>/dev/null
-pkill -f "dotnet.*ReservationService" 2>/dev/null
+if [ -f /tmp/service-pids.txt ]; then
+  while read -r pid; do
+    kill "$pid" 2>/dev/null || true
+  done < /tmp/service-pids.txt
+fi
 
-wait 2>/dev/null
 exit 0
