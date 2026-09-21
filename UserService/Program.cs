@@ -23,7 +23,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var connectionString = builder.Configuration.GetConnectionString("UserDb");
     builder.Services.AddDbContext<UserServiceContext>(options =>
         options.UseNpgsql(connectionString));
 }

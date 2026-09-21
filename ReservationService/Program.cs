@@ -24,7 +24,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var connectionString = builder.Configuration.GetConnectionString("ReservationDb");
     builder.Services.AddDbContext<ReservationServiceContext>(options =>
         options.UseNpgsql(connectionString));
 }

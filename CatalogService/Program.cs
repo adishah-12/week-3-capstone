@@ -19,7 +19,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var connectionString = builder.Configuration.GetConnectionString("CatalogDb");
     builder.Services.AddDbContext<CatalogServiceContext>(options =>
         options.UseNpgsql(connectionString));
 }
