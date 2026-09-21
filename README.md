@@ -99,3 +99,29 @@ Local run:
 chmod +x run-all.sh run-endpoint-tests.sh endpoint-behaviors/*.sh
 ./run-endpoint-tests.sh
 ```
+
+- **deploy** — runs after both test jobs pass, only on push to `main`. Publishes and zips all 3 services, deploys to the live Elastic Beanstalk environment.
+
+## Deployment
+
+Live on AWS: 3 services (UserService, CatalogService, ReservationService) running as separate processes on a single AWS Elastic Beanstalk instance, sharing one RDS PostgreSQL instance (`db.t3.micro`) with 3 databases, one per service.
+
+**Live URL:** `http://library-microservices-env.eba-h6t7wmmq.us-east-1.elasticbeanstalk.com`
+
+```bash
+EB=http://library-microservices-env.eba-h6t7wmmq.us-east-1.elasticbeanstalk.com
+
+curl $EB/health                  # UserService
+curl $EB/catalog/health          # CatalogService
+curl $EB/reservations/health     # ReservationService
+
+curl $EB/api/auth/register -X POST -H "Content-Type: application/json" -d '{...}'
+curl $EB/catalog/api/catalog/books
+curl $EB/reservations/api/reservations -H "Authorization: Bearer <token>"
+```
+
+Full endpoint paths mirror `api-contracts.md`, prefixed with `/catalog` or `/reservations` for those two services (UserService sits at the root).
+
+**Architecture:** nginx (`.platform/nginx/conf.d/elasticbeanstalk/services.conf`) routes `/catalog/*` and `/reservations/*` to their respective processes; UserService answers at root. All 3 processes are started by `Procfile`. Each connects to its own database on the shared RDS instance via distinct connection string keys (`ConnectionStrings__UserDb`, `__CatalogDb`, `__ReservationDb`), set as EB environment properties. Migrations run automatically on startup (`context.Database.Migrate()`), which also creates `catalogservicedb` and `reservationservicedb` on first boot.
+
+**CI/CD:** `.github/workflows/ci-cd.yml` - every push to `main` runs unit tests → endpoint-behavior tests → auto-deploy to this EB environment via `einaregilsson/beanstalk-deploy`.
