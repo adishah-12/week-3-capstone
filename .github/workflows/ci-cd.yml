@@ -50,3 +50,39 @@ jobs:
 
       - name: Run endpoint behavior tests
         run: ./run-endpoint-tests.sh
+  
+  deploy:
+    name: Deploy to Elastic Beanstalk
+    needs: [unit-tests, endpoint-behavior-tests]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish all services
+        run: |
+          dotnet publish UserService        -c Release -o bundle/UserService
+          dotnet publish CatalogService     -c Release -o bundle/CatalogService
+          dotnet publish ReservationService -c Release -o bundle/ReservationService
+          cp Procfile bundle/
+          cp -r .platform bundle/
+
+      - name: Zip bundle
+        run: (cd bundle && zip -r ../library-microservices.zip .)
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: library-microservices
+          environment_name: library-microservices-env
+          version_label: v${{ github.run_number }}
+          region: us-east-1
+          deployment_package: library-microservices.zip
